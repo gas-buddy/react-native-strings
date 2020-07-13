@@ -1,0 +1,12 @@
+title: Count Strings
+baseName: Count
+entries:
+  - key: ZeroOneMore
+    type: counted
+    values:
+      0:
+        en: You have no messages
+      1:
+        en: You have 1 message
+      default:
+        en: You have ${count} messages

@@ -1,0 +1,20 @@
+{{#each strings}}
+  {{key}}({{#if hasArgs}}templateArgs?: {
+    {{#each args}}{{name}}: {{type}},{{/each}}
+  }{{/if}}): string {
+{{#if isCounted}}
+  const count = templateArgs?.count || 0;
+{{#each value}}{{#if isDefault}}  return BuildString({{{json value}}}, templateArgs);{{
+    else
+  }}  if (count === {{number}}) {
+    return BuildString({{{json value}}}, templateArgs);
+  }
+{{/if}}{{/each}}{{
+  else
+}}    return BuildString({{{json value}}}{{#if ../hasArgs}}, templateArgs{{/if}});
+{{/if}}
+  },
+{{/each}}{{#each nodes}}  {{key}}: {
+  {{> node}}
+  },
+{{/each}}

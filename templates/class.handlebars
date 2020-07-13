@@ -1,0 +1,49 @@
+/* eslint-disable prettier/prettier, quotes */
+declare var __DEV__: boolean;
+
+const MissingStringValue = (typeof __DEV__ !== 'undefined' && __DEV__) ? '💀Missing String💀' : '';
+
+export type SupportedLanguage = {{#each locales}}'{{{snake this}}}'{{#if @last}}{{else}} | {{/if}}{{/each}};
+
+export const SupportedLanguages = [{{#each locales}}'{{{snake this}}}'{{#if @last}}{{else}}, {{/if}}{{/each}}];
+
+export interface LanguageValue {
+  literals: Array<string>;
+  substitutions?: Array<string>;
+}
+
+export interface StringSourceSpec {
+{{#each locales}}
+  {{snake this}}?: LanguageValue;
+{{/each}}
+}
+
+let cultureOrder: Array<SupportedLanguage> = [{{#each locales}}'{{{snake this}}}'{{#if @last}}{{else}}, {{/if}}{{/each}}];
+
+export function SetLanguagePreference(order: Array<SupportedLanguage>) {
+  cultureOrder = order;
+}
+
+/**
+ * ATTENTION!!!! This is a generated file (by react-native-strings), DO NOT EDIT
+ */
+export function BuildString(template: StringSourceSpec, args?: {[key: string]: any}) {
+  const bestTemplate = cultureOrder.find(c => template[c]);
+  if (!bestTemplate) {
+    return MissingStringValue;
+  }
+  const { literals, substitutions } = <LanguageValue>template[bestTemplate];
+  if (args) {
+    const finalString = [];
+    for (let i = 0, len = literals.length; i < len; i += 1) {
+      finalString.push(literals[i], substitutions?.[i] ? args[substitutions[i]] : '');
+    }
+    return finalString.join('');
+  } else {
+    return literals[0];
+  }
+}
+
+export const Strings = {
+  {{> node}}
+};
