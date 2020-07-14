@@ -1,12 +1,13 @@
 {
   "name": "react-native-strings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Type safe string generation including ordinally-aware strings from YAML templates targeted at React Native",
   "main": "build/index.js",
   "bin": "build/cli.js",
   "types": "build/index",
   "files": [
-    "build"
+    "build",
+    "templates"
   ],
   "scripts": {
     "clean-build": "yarn run clean && yarn run build",
