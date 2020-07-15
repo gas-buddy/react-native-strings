@@ -11,7 +11,7 @@
   }
 {{/if}}{{/each}}{{
   else
-}}    return BuildString({{{json value}}}{{#if ../hasArgs}}, templateArgs{{/if}});
+}}    return BuildString({{{json value}}}{{#if hasArgs}}, templateArgs{{/if}});
 {{/if}}
   },
 {{/each}}{{#each nodes}}  {{key}}: {

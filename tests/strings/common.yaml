@@ -5,3 +5,8 @@ entries:
     en: GasBuddy
   - key: Button.OK
     en: OK
+  - key: Name
+    en: Hello, ${name}.
+    args:
+      - name: name
+        type: string

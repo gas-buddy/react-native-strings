@@ -49,6 +49,11 @@ export const Strings = {
       GasBuddy(): string {
         return BuildString({"en":{"literals":["GasBuddy"]}});
       },
+      Name(templateArgs?: {
+        name: string,
+      }): string {
+        return BuildString({"en":{"literals":["Hello, ","."],"substitutions":["name"]}}, templateArgs);
+      },
       Button: {
         OK(): string {
           return BuildString({"en":{"literals":["OK"]}});

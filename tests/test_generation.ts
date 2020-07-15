@@ -30,5 +30,10 @@ tap.test('test_generation', (test) => {
     'You have 4 messages',
     'Should resolve a counted value',
   );
+  test.strictEquals(
+    Strings.Common.Name({ name: 'Max' }),
+    'Hello, Max.',
+    'Should resolve a templated value',
+  );
   test.end();
 });
