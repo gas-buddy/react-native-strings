@@ -12,6 +12,9 @@ tap.test('test_generation', (test) => {
   gen.addFromFile(path.resolve(__dirname, './strings/count.yaml'));
   const output = gen.generate();
   const snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/strings.ts'), 'utf8');
+  if (output !== snapshot) {
+    fs.writeFileSync(path.resolve(__dirname, './snapshots/strings.ts.new'), output, 'utf8');
+  }
   test.strictEquals(output, snapshot, 'Expected unchanged output');
 
   test.strictEquals(Strings.Common.Button.OK(), 'OK', 'Should resolve a simple value');

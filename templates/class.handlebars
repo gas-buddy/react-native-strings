@@ -8,6 +8,7 @@ export type SupportedLanguage = {{#each locales}}'{{{snake this}}}'{{#if @last}}
 export const SupportedLanguages = [{{#each locales}}'{{{snake this}}}'{{#if @last}}{{else}}, {{/if}}{{/each}}];
 
 export interface LanguageValue {
+  key: string;
   literals: Array<string>;
   substitutions?: Array<string>;
 }
@@ -25,6 +26,16 @@ export function SetLanguagePreference(order: Array<SupportedLanguage>) {
 }
 
 /**
+ * The transformer can be useful for debugging, to find non-l10 strings or those that don't handle
+ * potential size changes well
+ */
+let transformer: (input: LanguageValue) => LanguageValue | string;
+
+export function SetL10NTransformer(transformerFunction: (input: LanguageValue) => LanguageValue | string) {
+  transformer = transformerFunction;
+}
+
+/**
  * ATTENTION!!!! This is a generated file (by react-native-strings), DO NOT EDIT
  */
 export function BuildString(template: StringSourceSpec, args?: {[key: string]: any}) {
@@ -32,7 +43,15 @@ export function BuildString(template: StringSourceSpec, args?: {[key: string]: a
   if (!bestTemplate) {
     return MissingStringValue;
   }
-  const { literals, substitutions } = <LanguageValue>template[bestTemplate];
+  let parsedTemplate = <LanguageValue>template[bestTemplate];
+  if (transformer) {
+    const xformed = transformer(parsedTemplate);
+    if (typeof xformed === 'string') {
+      return xformed;
+    }
+    parsedTemplate = xformed;
+  }
+  const { literals, substitutions } = parsedTemplate;
   if (args) {
     const finalString = [];
     for (let i = 0, len = literals.length; i < len; i += 1) {

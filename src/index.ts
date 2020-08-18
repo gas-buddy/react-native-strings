@@ -16,14 +16,19 @@ interface TreeRoot extends TreeNode {
   locales: Array<string>;
 }
 
-function supported(locales: Array<string>, values: any) {
-  const compiledValues: { [key: string]: CompiledTemplate } = {};
+interface CompiledTemplateWithKey extends CompiledTemplate {
+  key?: string;
+}
+
+function supported(key: string, locales: Array<string>, values: any) {
+  const compiledValues: { [key: string]: CompiledTemplateWithKey } = {};
   locales.forEach((locale) => {
     if (values[locale]) {
-      const template = compile(values[locale]);
+      const template = compile(values[locale]) as CompiledTemplateWithKey;
       if (!template.substitutions?.length) {
         delete template.substitutions;
       }
+      template.key = key;
       compiledValues[locale] = template;
     }
   });
@@ -93,7 +98,7 @@ export default class TypedStringBuilder {
         const { values } = <CountedStringsFileEntry>langs;
         const value = Object.entries(values).map(([number, ordinalValues]) => ({
           number,
-          value: supported(this.locales, ordinalValues),
+          value: supported(key, this.locales, ordinalValues),
           isDefault: number === 'default',
         }));
         node.strings.push({
@@ -111,7 +116,7 @@ export default class TypedStringBuilder {
           args: finalArgs,
           isCounted: false,
           fullKey: key,
-          value: supported(this.locales, langs),
+          value: supported(key, this.locales, langs),
         });
       }
 
