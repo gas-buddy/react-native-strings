@@ -29,7 +29,7 @@ export function SetLanguagePreference(order: Array<SupportedLanguage>) {
  * The transformer can be useful for debugging, to find non-l10 strings or those that don't handle
  * potential size changes well
  */
-let transformer: undefined | ((input: LanguageValue) => LanguageValue | string);
+let transformer: undefined | (input: LanguageValue) => LanguageValue | string;
 
 export function SetL10NTransformer(transformerFunction?: (input: LanguageValue) => LanguageValue | string) {
   transformer = transformerFunction;
