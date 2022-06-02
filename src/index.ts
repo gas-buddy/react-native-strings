@@ -28,11 +28,10 @@ function supported(key: string, locales: Array<string>, values: any) {
       if (!template.substitutions?.length) {
         delete template.substitutions;
       }
-      template.key = key;
       compiledValues[locale] = template;
     }
   });
-  return compiledValues;
+  return { key, ...compiledValues };
 }
 
 export default class TypedStringBuilder {
@@ -63,7 +62,8 @@ export default class TypedStringBuilder {
   addFromYamlString(rawYaml: string) {
     const { baseName, entries } = <StringsFileContent>yaml.parse(rawYaml);
     entries.forEach((source) => {
-      this.stringsByKey[`${baseName || ''}${baseName ? '.' : ''}${source.key}`] = source;
+      const key = `${baseName || ''}${baseName ? '.' : ''}${source.key}`;
+      this.stringsByKey[key] = Object.assign(this.stringsByKey[key] || {}, source);
     });
   }
 

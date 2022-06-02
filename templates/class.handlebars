@@ -8,12 +8,12 @@ export type SupportedLanguage = {{#each locales}}'{{{snake this}}}'{{#if @last}}
 export const SupportedLanguages = [{{#each locales}}'{{{snake this}}}'{{#if @last}}{{else}}, {{/if}}{{/each}}];
 
 export interface LanguageValue {
-  key: string;
   literals: Array<string>;
   substitutions?: Array<string>;
 }
 
 export interface StringSourceSpec {
+  key: string;
 {{#each locales}}
   {{snake this}}?: LanguageValue;
 {{/each}}
@@ -29,9 +29,9 @@ export function SetLanguagePreference(order: Array<SupportedLanguage>) {
  * The transformer can be useful for debugging, to find non-l10 strings or those that don't handle
  * potential size changes well
  */
-let transformer: undefined | ((input: LanguageValue) => LanguageValue | string);
+let transformer: undefined | ((key: string, input: LanguageValue) => LanguageValue | string);
 
-export function SetL10NTransformer(transformerFunction?: (input: LanguageValue) => LanguageValue | string) {
+export function SetL10NTransformer(transformerFunction?: (key: string, input: LanguageValue) => LanguageValue | string) {
   transformer = transformerFunction;
 }
 
@@ -45,7 +45,7 @@ export function BuildString(template: StringSourceSpec, args?: {[key: string]: a
   }
   let parsedTemplate = <LanguageValue>template[bestTemplate];
   if (transformer) {
-    const xformed = transformer(parsedTemplate);
+    const xformed = transformer(template.key, parsedTemplate);
     if (typeof xformed === 'string') {
       return xformed;
     }

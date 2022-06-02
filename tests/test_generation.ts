@@ -10,6 +10,7 @@ tap.test('test_generation', (test) => {
   test.ok(gen, 'Should create a generator');
   gen.addFromFile(path.resolve(__dirname, './strings/common.yaml'));
   gen.addFromFile(path.resolve(__dirname, './strings/count.yaml'));
+  gen.addFromFile(path.resolve(__dirname, './strings/es.yaml'));
   const output = gen.generate();
   const snapshot = fs.readFileSync(path.resolve(__dirname, './snapshots/strings.ts'), 'utf8');
   if (output !== snapshot) {

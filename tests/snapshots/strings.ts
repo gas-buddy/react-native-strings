@@ -8,12 +8,12 @@ export type SupportedLanguage = 'en' | 'es' | 'en_ca';
 export const SupportedLanguages = ['en', 'es', 'en_ca'];
 
 export interface LanguageValue {
-  key: string;
   literals: Array<string>;
   substitutions?: Array<string>;
 }
 
 export interface StringSourceSpec {
+  key: string;
   en?: LanguageValue;
   es?: LanguageValue;
   en_ca?: LanguageValue;
@@ -29,9 +29,9 @@ export function SetLanguagePreference(order: Array<SupportedLanguage>) {
  * The transformer can be useful for debugging, to find non-l10 strings or those that don't handle
  * potential size changes well
  */
-let transformer: undefined | ((input: LanguageValue) => LanguageValue | string);
+let transformer: undefined | ((key: string, input: LanguageValue) => LanguageValue | string);
 
-export function SetL10NTransformer(transformerFunction?: (input: LanguageValue) => LanguageValue | string) {
+export function SetL10NTransformer(transformerFunction?: (key: string, input: LanguageValue) => LanguageValue | string) {
   transformer = transformerFunction;
 }
 
@@ -45,7 +45,7 @@ export function BuildString(template: StringSourceSpec, args?: {[key: string]: a
   }
   let parsedTemplate = <LanguageValue>template[bestTemplate];
   if (transformer) {
-    const xformed = transformer(parsedTemplate);
+    const xformed = transformer(template.key, parsedTemplate);
     if (typeof xformed === 'string') {
       return xformed;
     }
@@ -66,16 +66,16 @@ export function BuildString(template: StringSourceSpec, args?: {[key: string]: a
 export const Strings = {
     Common: {
       GasBuddy(): string {
-        return BuildString({"en":{"literals":["GasBuddy"],"key":"Common.GasBuddy"}});
+        return BuildString({"key":"Common.GasBuddy","en":{"literals":["GasBuddy"]}});
       },
       Name(templateArgs?: {
         name: string,
       }): string {
-        return BuildString({"en":{"literals":["Hello, ","."],"substitutions":["name"],"key":"Common.Name"}}, templateArgs);
+        return BuildString({"key":"Common.Name","en":{"literals":["Hello, ","."],"substitutions":["name"]},"es":{"literals":["Hola, ","."],"substitutions":["name"]}}, templateArgs);
       },
       Button: {
         OK(): string {
-          return BuildString({"en":{"literals":["OK"],"key":"Common.Button.OK"}});
+          return BuildString({"key":"Common.Button.OK","en":{"literals":["OK"]}});
         },
       },
     },
@@ -85,11 +85,11 @@ export const Strings = {
       }): string {
       const count = templateArgs?.count || 0;
       if (count === 0) {
-        return BuildString({"en":{"literals":["You have no messages"],"key":"Count.ZeroOneMore"}}, templateArgs);
+        return BuildString({"key":"Count.ZeroOneMore","en":{"literals":["You have no messages"]}}, templateArgs);
       }
       if (count === 1) {
-        return BuildString({"en":{"literals":["You have 1 message"],"key":"Count.ZeroOneMore"}}, templateArgs);
+        return BuildString({"key":"Count.ZeroOneMore","en":{"literals":["You have 1 message"]}}, templateArgs);
       }
-      return BuildString({"en":{"literals":["You have "," messages"],"substitutions":["count"],"key":"Count.ZeroOneMore"}}, templateArgs);  },
+      return BuildString({"key":"Count.ZeroOneMore","en":{"literals":["You have "," messages"],"substitutions":["count"]}}, templateArgs);  },
     },
 };

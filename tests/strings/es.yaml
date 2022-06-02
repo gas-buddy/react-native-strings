@@ -1,0 +1,4 @@
+title: Spanish Translations
+entries:
+  - key: Common.Name
+    es: Hola, ${name}.
