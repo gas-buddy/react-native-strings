@@ -12,25 +12,33 @@ const [sourceDirectory, destinationFilename] = argv._;
 
 const usage = `
 USAGE:
-  npx react-native-strings <source-directory> <destination-filename> [--locales=<supported_locales>]
+  npx react-native-strings <source-directory> <destination-filename-or-directory> [--locales=<supported_locales>] [--json]
 `;
 
 assert(sourceDirectory, usage);
 assert(destinationFilename, usage);
-
-mkdirp.sync(path.dirname(destinationFilename));
 
 const stringBuilder = new TypescriptStringBuilder(argv.locales || 'en');
 
 const files = glob.sync('**/*.yaml', { cwd: path.resolve(sourceDirectory) });
 files.forEach((file) => stringBuilder.addFromFile(path.join(sourceDirectory, file)));
 
-const stringsFile = stringBuilder.generate();
+function writeIfChanged(filename: string, content: string) {
+  const existing = fs.existsSync(filename) ? fs.readFileSync(filename, 'utf8') : '';
+  if (existing !== content) {
+    fs.writeFileSync(filename, content, 'utf8');
+  }
+}
 
-const exFile = fs.existsSync(destinationFilename)
-  ? fs.readFileSync(destinationFilename, 'utf8')
-  : '';
-
-if (exFile !== stringsFile) {
-  fs.writeFileSync(destinationFilename, stringsFile, 'utf8');
+if (argv.json) {
+  stringBuilder.locales.forEach((locale) => {
+    mkdirp.sync(destinationFilename);
+    const jsonFile = stringBuilder.generateJson(locale);
+    const outpath = path.join(destinationFilename, `${locale}.json`);
+    writeIfChanged(outpath, jsonFile);
+  });
+} else {
+  mkdirp.sync(path.dirname(destinationFilename));
+  const stringsFile = stringBuilder.generate();
+  writeIfChanged(destinationFilename, stringsFile);
 }

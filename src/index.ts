@@ -67,6 +67,16 @@ export default class TypedStringBuilder {
     });
   }
 
+  generateJson(locale: string) {
+    const flatKeys: Record<string, string> = {};
+    Object.entries(this.stringsByKey).forEach(([key, langs]) => {
+      if ((langs as any)[locale]) {
+        flatKeys[key] = (langs as any)[locale];
+      }
+    });
+    return JSON.stringify(flatKeys, null, 2);
+  }
+
   generate() {
     const tree: TreeRoot = {
       locales: this.locales,
